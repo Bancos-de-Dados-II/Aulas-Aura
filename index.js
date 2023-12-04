@@ -14,14 +14,28 @@ require('dotenv').config();
     console.log('Connection established')
     console.log(serverInfo)
 
+    // let { records, summary } = await driver.executeQuery(
+    //     'MERGE (p:Pessoa {nome: $name})',  
+    //      { name: 'Alice' },  
+    //      { database: 'neo4j' }  
+    //   )
+    //   console.log(
+    //     `Created ${summary.counters.updates().nodesCreated} nodes ` +
+    //     `in ${summary.resultAvailableAfter} ms.`
+    //   )
+
     let { records, summary } = await driver.executeQuery(
-        'MERGE (p:Pessoa {nome: $name})',  
-         { name: 'Alice' },  
-         { database: 'neo4j' }  
+        'MATCH (p:Pessoa) RETURN p.nome AS name',
+        {},
+        { database: 'neo4j' }
       )
-      console.log(
-        `Created ${summary.counters.updates().nodesCreated} nodes ` +
-        `in ${summary.resultAvailableAfter} ms.`
+      for(let record of records) {  
+        console.log(`Person with name: ${record.get('name')}`)
+        console.log(`Available properties for this node are: ${record.keys}\n`)
+      }
+      console.log(  
+        `The query \`${summary.query.text}\` ` +
+        `returned ${records.length} nodes.\n`
       )
 
     await driver.close();
