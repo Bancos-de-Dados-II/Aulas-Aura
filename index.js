@@ -13,6 +13,19 @@ require('dotenv').config();
     const serverInfo = await driver.getServerInfo()
     console.log('Connection established')
     console.log(serverInfo)
+
+    let { records, summary } = await driver.executeQuery(
+        'MERGE (p:Pessoa {nome: $name})',  
+         { name: 'Alice' },  
+         { database: 'neo4j' }  
+      )
+      console.log(
+        `Created ${summary.counters.updates().nodesCreated} nodes ` +
+        `in ${summary.resultAvailableAfter} ms.`
+      )
+
+    await driver.close();
+
   } catch(err) {
     console.log(`Connection error\n${err}\nCause: ${err.cause}`)
   }
